@@ -105,30 +105,42 @@ class ExpenseFormState extends State<ExpenseForm> {
                   return GestureDetector(
                     onTap: () => setState(() => _selectedCategory = cat),
                     child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 7,
-                      ),
+                      width: 70,
+                      height: 70,
+                      margin: const EdgeInsets.all(7),
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppColors.accentLight
-                            : categoryMap[cat]!.color.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: selected
-                              ? AppColors.accent
-                              : Colors.transparent,
+                            ? categoryMap[cat]!.color.withOpacity(0.15)
+                            : AppColors.textMuted.withOpacity(0.08),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(10),
                         ),
                       ),
-                      child: Text(
-                        cat,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: selected
-                              ? AppColors.accentDark
-                              : categoryMap[cat]!.color,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            categoryMap[cat]!.icon,
+                            color: selected
+                                ? categoryMap[cat]!.color
+                                : AppColors.textMuted,
+                            size: 25,
+                          ),
+                          Text(
+                            categoryMap[cat]!.name,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: selected
+                                  ? categoryMap[cat]!.color
+                                  : AppColors.textMuted,
+                              letterSpacing: -0.4,
+                              fontWeight: selected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
