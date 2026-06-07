@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myspendwise/screens/expense_form.dart';
 import '../config/app_colors.dart';
 import './screens/expenses.dart';
 import './screens/summary.dart';
@@ -34,7 +35,11 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   int index = 0;
 
-  final screens = [const ExpensesScreen(), const SummaryScreen()];
+  final screens = [
+    const ExpensesScreen(),
+    const ExpenseForm(),
+    const SummaryScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,20 +53,24 @@ class _MainState extends State<Main> {
               'SpendWise',
               style: TextStyle(
                 color: AppColors.background,
-                fontSize: 30,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
               ),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.account_balance_wallet,
-              color: AppColors.background,
-              size: 32,
             ),
           ],
         ),
 
-        backgroundColor: AppColors.primary,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.accent, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         elevation: 0,
       ),
       body: screens[index],
@@ -78,6 +87,15 @@ class _MainState extends State<Main> {
             icon: Icon(Icons.receipt_long),
             activeIcon: Icon(Icons.receipt_long_outlined),
             label: 'Expenses',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset('images/add (1).png', width: 24, height: 24),
+            activeIcon: Image.asset(
+              'images/icon_add.png',
+              width: 24,
+              height: 24,
+            ),
+            label: 'Add',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),
