@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:myspendwise/config/app_colors.dart';
 import 'package:myspendwise/data/category.dart';
 import 'package:myspendwise/data/expense_data.dart';
+import 'package:myspendwise/services/hive_service.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key});
@@ -183,8 +184,21 @@ class ExpenseFormState extends State<ExpenseForm> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  saveData();
-                  Navigator.pop(context);
+                  setState(() {
+                    saveData();
+                    _titleController.clear();
+                    _priceController.clear();
+                    _selectedCategory = 'Food';
+                    _selectedDate = DateTime.now();
+                  });
+                  ();
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (_) => const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Text('Expense added!'),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accent,
@@ -226,23 +240,20 @@ class ExpenseFormState extends State<ExpenseForm> {
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
   );
 
-  void saveData() {
-    setState(() {
-      mockExpenses.add(
-        Expense(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          title: _titleController.text,
-          price: double.tryParse(_priceController.text) ?? 0,
-          category: _selectedCategory,
-          date: _selectedDate,
-        ),
-      );
-    });
-
-    // optional: clear fields after saving
-    _titleController.clear();
-    _priceController.clear();
-    _selectedCategory = 'Food';
-    _selectedDate = DateTime.now();
+  Future<void> saveData() async {
+    await HiveService.addExpense(
+      Expense(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: _titleController.text,
+        price: double.parse(_priceController.text),
+        category: _selectedCategory,
+        date: _selectedDate,
+      ),
+    );
   }
 }
+  
+    // optional: clear fields after saving
+
+
+

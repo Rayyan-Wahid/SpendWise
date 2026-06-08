@@ -6,7 +6,8 @@ import 'package:myspendwise/widgets/summary_card.dart';
 import '../config/app_colors.dart';
 
 class SummaryScreen extends StatefulWidget {
-  const SummaryScreen({super.key});
+  final expenses;
+  const SummaryScreen({super.key, required this.expenses});
 
   @override
   State<SummaryScreen> createState() => _SummaryScreenState();
@@ -16,22 +17,21 @@ class _SummaryScreenState extends State<SummaryScreen> {
   // Category short labels matching the screenshot order
   static const List<String> _labels = [
     'Food',
-    'Transport',
-    'Utilities',
-    'Shopping',
+    'Transp..',
+    'Bills',
+    'Shop..',
     'Health',
     'Other',
   ];
 
   List<BarChartGroupData> buildBars(Map<String, double> totals) {
-    final entries = totals.entries.toList();
-
-    return List.generate(entries.length, (index) {
+    return List.generate(_labels.length, (index) {
+      final value = totals[_labels[index]] ?? 0.0;
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
-            toY: entries[index].value,
+            toY: value,
             width: 40,
             // Rounded top corners only, flat bottom — like the screenshot
             borderRadius: const BorderRadius.only(
@@ -47,7 +47,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final total = categoryTotals(mockExpenses);
+    final total = categoryTotals(widget.expenses);
     final double maximumTotal = total.values.reduce((a, b) => a > b ? a : b);
 
     return Scaffold(

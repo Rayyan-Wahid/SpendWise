@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:myspendwise/data/category.dart';
 import 'package:myspendwise/data/expense_data.dart';
 import 'package:myspendwise/widgets/expense_card.dart';
 import '../config/app_colors.dart';
 
 class ExpensesScreen extends StatefulWidget {
-  const ExpensesScreen({super.key});
+  final List<Expense> expenses;
+  const ExpensesScreen({super.key, required this.expenses});
 
   @override
   State<ExpensesScreen> createState() => _ExpensesScreenState();
 }
 
 class _ExpensesScreenState extends State<ExpensesScreen> {
-  List<Expense> expenses = List.from(mockExpenses);
-  List<Expense> get sorted =>
-      [...expenses]..sort((a, b) => b.date.compareTo(a.date));
-
-  double get total => expenses.fold(0, (sum, e) => sum + e.price);
+  double get total => widget.expenses.fold(0.0, (sum, e) => sum + e.price);
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +87,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: sorted.length,
+              itemCount: widget.expenses.length,
               itemBuilder: (context, index) {
-                final expense = sorted[index];
+                final expense = widget.expenses[index];
                 return ExpenseCard(
                   expense: expense,
                   onEdit: () => {},
