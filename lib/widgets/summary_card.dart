@@ -5,81 +5,82 @@ import '../data/expense_data.dart';
 import '../data/category.dart';
 
 class SummaryCard extends StatelessWidget {
-  final Expense expense;
+  final double total;
+  final Category category;
+  final double maximum;
 
-  const SummaryCard({super.key, required this.expense});
+  const SummaryCard({
+    super.key,
+    required this.total,
+    required this.category,
+    required this.maximum,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final config = categoryMap[expense.category] ?? categoryMap['Other']!;
-    final formattedDate = DateFormat('MMMM d, y - h:mm a').format(expense.date);
-    return Container(
-      height: 120,
-      width: double.infinity,
+    final ratio = maximum > 0 ? (total / maximum).clamp(0.0, 1.0) : 0.0;
 
-      child: Card(
-        elevation: 6,
-        shadowColor: Colors.black26,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        color: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return Card(
+      elevation: 3,
+      shadowColor: Colors.black26,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
         child: Row(
           children: [
+            // Icon
             Container(
-              width: 50,
-              height: 50,
-              margin: const EdgeInsets.all(16),
+              width: 46,
+              height: 46,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: config.color.withOpacity(0.1),
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                color: category.color.withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-              child: Icon(config.icon, color: config.color, size: 25),
+              child: Icon(category.icon, color: category.color, size: 22),
             ),
+            const SizedBox(width: 12),
+            // Name + amount + progress bar
             Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min, // 👈 key fix
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    expense.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      letterSpacing: -0.4,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        category.name,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        'PKR ${total.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1E293B),
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    formattedDate, // show only date
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.categoryOther,
-                      letterSpacing: -0.4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(11.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'PKR ${expense.price.toStringAsFixed(0)}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E293B),
+                  const SizedBox(height: 8),
+                  // 👇 No Expanded here — just a fixed height SizedBox
+                  SizedBox(
+                    height: 6,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: ratio,
+                        backgroundColor: category.color.withOpacity(0.1),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          category.color,
+                        ),
                       ),
                     ),
                   ),
