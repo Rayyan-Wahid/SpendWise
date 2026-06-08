@@ -17,9 +17,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
   // Category short labels matching the screenshot order
   static const List<String> _labels = [
     'Food',
-    'Transp..',
-    'Bills',
-    'Shop..',
+    'Transport',
+    'Utilities',
+    'Shopping',
     'Health',
     'Other',
   ];
@@ -48,7 +48,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
   @override
   Widget build(BuildContext context) {
     final total = categoryTotals(widget.expenses);
-    final double maximumTotal = total.values.reduce((a, b) => a > b ? a : b);
+    final double maximumTotal = total.values.isEmpty
+        ? 1.0
+        : total.values.fold(0.0, (a, b) => a > b ? a : b);
 
     return Scaffold(
       body: Padding(
@@ -151,14 +153,17 @@ class _SummaryScreenState extends State<SummaryScreen> {
 }
 
 Map<String, double> categoryTotals(List<Expense> expenses) {
-  final totals = <String, double>{};
+  final Map<String, double> totals = {
+    'Food': 0.0,
+    'Transport': 0.0,
+    'Utilities': 0.0,
+    'Shopping': 0.0,
+    'Health': 0.0,
+    'Other': 0.0,
+  };
 
   for (final expense in expenses) {
-    totals.update(
-      expense.category,
-      (value) => value + expense.price,
-      ifAbsent: () => expense.price,
-    );
+    totals.update(expense.category, (value) => value + expense.price);
   }
 
   return totals;

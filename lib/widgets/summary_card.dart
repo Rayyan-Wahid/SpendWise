@@ -70,20 +70,20 @@ class SummaryCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // 👇 No Expanded here — just a fixed height SizedBox
-                  SizedBox(
-                    height: 6,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: ratio,
-                        backgroundColor: category.color.withOpacity(0.1),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          category.color,
+                  if (total > 0.0)
+                    SizedBox(
+                      height: 6,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: ratio,
+                          backgroundColor: category.color.withOpacity(0.1),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            category.color,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
