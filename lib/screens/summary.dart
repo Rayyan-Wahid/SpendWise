@@ -20,7 +20,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
     'Utilities',
     'Shopping',
     'Health',
-    'Others',
+    'Other',
   ];
 
   List<BarChartGroupData> buildBars(Map<String, double> totals) {
