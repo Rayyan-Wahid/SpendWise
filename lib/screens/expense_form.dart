@@ -202,16 +202,16 @@ class ExpenseFormState extends State<ExpenseForm> {
               height: 48,
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  await saveData();
+                  if (!mounted) return;
+                  if (widget.expense != null) Navigator.pop(context);
                   setState(() {
-                    saveData();
                     titleController.clear();
                     priceController.clear();
                     selectedCategory = 'Food';
                     selectedDate = DateTime.now();
-                    if (widget.expense != null) Navigator.pop(context);
                   });
-                  ();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: widget.expense != null
