@@ -14,26 +14,27 @@ class SummaryScreen extends StatefulWidget {
 }
 
 class _SummaryScreenState extends State<SummaryScreen> {
-  // Category short labels matching the screenshot order
-  static const List<String> _labels = [
-    'Food',
-    'Transport',
-    'Utilities',
-    'Shopping',
-    'Health',
-    'Other',
-  ];
+  final labels = categoryMap.keys.toList();
+
+  static const Map<String, String> shortLabels = {
+    'Food': 'Food',
+    'Transport': 'Trans.',
+    'Utilities': 'Utils.',
+    'Shopping': 'Shop.',
+    'Health': 'Health',
+    'Other': 'Other',
+  };
 
   List<BarChartGroupData> buildBars(Map<String, double> totals) {
-    return List.generate(_labels.length, (index) {
-      final value = totals[_labels[index]] ?? 0.0;
+    return List.generate(labels.length, (index) {
+      final value = totals[labels[index]] ?? 0.0;
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
             toY: value,
-            width: 40,
-            // Rounded top corners only, flat bottom — like the screenshot
+            width: MediaQuery.of(context).size.width * 0.09,
+
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(10),
               topRight: Radius.circular(10),
@@ -98,16 +99,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 32,
+                          reservedSize: 40,
                           getTitlesWidget: (value, meta) {
                             final index = value.toInt();
-                            if (index < 0 || index >= _labels.length) {
+                            if (index < 0 || index >= labels.length) {
                               return const SizedBox.shrink();
                             }
                             return Padding(
-                              padding: const EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.only(top: 6),
                               child: Text(
-                                _labels[index],
+                                shortLabels[labels[index]] ?? labels[index],
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.textMuted,
@@ -131,14 +132,15 @@ class _SummaryScreenState extends State<SummaryScreen> {
               'Category Breakdown',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
             ),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: _labels.length,
+                itemCount: labels.length,
                 itemBuilder: (context, index) {
-                  final label = _labels[index];
-                  final double? categoryTotal = total[label] ?? 0.0;
+                  final label = labels[index];
+                  final double categoryTotal = total[label] ?? 0.0;
                   return SummaryCard(
-                    total: categoryTotal!,
+                    total: categoryTotal,
                     category: categoryMap[label]!,
                     maximum: maximumTotal,
                   );
@@ -154,12 +156,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
 Map<String, double> categoryTotals(List<Expense> expenses) {
   final Map<String, double> totals = {
-    'Food': 0.0,
-    'Transport': 0.0,
-    'Utilities': 0.0,
-    'Shopping': 0.0,
-    'Health': 0.0,
-    'Other': 0.0,
+    for (final key in categoryMap.keys) key: 0.0,
   };
 
   for (final expense in expenses) {

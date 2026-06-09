@@ -74,40 +74,6 @@ class AppColors {
 
   static const Color categoryOther = Color(0xFF6B7280);
   static const Color categoryOtherBg = Color(0xFFF3F4F6);
-
-  /// Returns the color for a category name.
-  static Color forCategory(String category) {
-    switch (category) {
-      case 'Food':
-        return categoryFood;
-      case 'Transport':
-        return categoryTransport;
-      case 'Utilities':
-        return categoryUtilities;
-      case 'Shopping':
-        return categoryShopping;
-      case 'Health':
-        return categoryHealth;
-      default:
-        return categoryOther;
-    }
-  }
-
-  /// Returns the background/fill color for a category name.
-  static Color bgForCategory(String category) {
-    switch (category) {
-      case 'Food':
-        return categoryFoodBg;
-      case 'Transport':
-        return categoryTransportBg;
-      case 'Utilities':
-        return categoryUtilitiesBg;
-      case 'Shopping':
-        return categoryShoppingBg;
-      case 'Health':
-        return categoryHealthBg;
-      default:
-        return categoryOtherBg;
-    }
-  }
 }
+
+/// Returns the background/fill color for a category name

@@ -24,7 +24,7 @@ class _MainState extends State<Main> {
         final expenses = HiveService.getExpenses();
         final screens = [
           ExpensesScreen(expenses: expenses),
-          const ExpenseForm(),
+          const ExpenseForm(expense: null),
           SummaryScreen(expenses: expenses),
         ];
 

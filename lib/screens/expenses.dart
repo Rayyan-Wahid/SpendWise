@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myspendwise/data/expense_data.dart';
+import 'package:myspendwise/screens/expense_form.dart';
+import 'package:myspendwise/services/hive_service.dart';
 import 'package:myspendwise/widgets/expense_card.dart';
 import '../config/app_colors.dart';
 
@@ -92,8 +94,17 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 final expense = widget.expenses[index];
                 return ExpenseCard(
                   expense: expense,
-                  onEdit: () => {},
-                  onDelete: () => {},
+                  onEdit: () => {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => ExpenseForm(expense: expense),
+                    ),
+                  },
+                  onDelete: () => {
+                    HiveService.deleteExpense(widget.expenses[index].id),
+                  },
                 );
               },
             ),

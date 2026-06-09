@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../config/app_colors.dart';
-import '../data/expense_data.dart';
 import '../data/category.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -45,7 +43,7 @@ class SummaryCard extends StatelessWidget {
             // Name + amount + progress bar
             Expanded(
               child: Column(
-                mainAxisSize: MainAxisSize.min, // 👈 key fix
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(

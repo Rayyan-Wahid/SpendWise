@@ -6,36 +6,55 @@ import 'package:myspendwise/data/expense_data.dart';
 import 'package:myspendwise/services/hive_service.dart';
 
 class ExpenseForm extends StatefulWidget {
-  const ExpenseForm({super.key});
+  final Expense? expense;
+  const ExpenseForm({super.key, required this.expense});
 
   @override
   State<ExpenseForm> createState() => ExpenseFormState();
 }
 
 class ExpenseFormState extends State<ExpenseForm> {
-  final _titleController = TextEditingController();
-  final _priceController = TextEditingController();
+  late final titleController;
+  late final priceController;
 
-  String _selectedCategory = 'Food';
-  DateTime _selectedDate = DateTime.now();
+  late String selectedCategory;
+  late DateTime selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(
+      text: widget.expense != null ? widget.expense!.title : '',
+    );
+    priceController = TextEditingController(
+      text: widget.expense != null ? widget.expense!.price.toString() : '',
+    );
+
+    selectedCategory = widget.expense != null
+        ? widget.expense!.category
+        : 'Food';
+    selectedDate = widget.expense != null
+        ? widget.expense!.date
+        : DateTime.now();
+  }
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
 
     if (picked != null) {
-      setState(() => _selectedDate = picked);
+      setState(() => selectedDate = picked);
     }
   }
 
   @override
   void dispose() {
-    _titleController.dispose();
-    _priceController.dispose();
+    titleController.dispose();
+    priceController.dispose();
     super.dispose();
   }
 
@@ -81,13 +100,13 @@ class ExpenseFormState extends State<ExpenseForm> {
             const SizedBox(height: 16),
 
             _label('Title'),
-            _input(_titleController, 'e.g. Dinner with friends'),
+            _input(titleController, 'e.g. Dinner with friends'),
 
             const SizedBox(height: 12),
 
             _label('Price'),
             TextField(
-              controller: _priceController,
+              controller: priceController,
               keyboardType: TextInputType.number,
               decoration: _inputDecoration('0').copyWith(prefixText: 'PKR  '),
             ),
@@ -101,10 +120,10 @@ class ExpenseFormState extends State<ExpenseForm> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: categoryMap.keys.map((cat) {
-                  final selected = cat == _selectedCategory;
+                  final selected = cat == selectedCategory;
 
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedCategory = cat),
+                    onTap: () => setState(() => selectedCategory = cat),
                     child: Container(
                       width: 70,
                       height: 70,
@@ -168,7 +187,7 @@ class ExpenseFormState extends State<ExpenseForm> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                    Text(DateFormat('dd MMM yyyy').format(selectedDate)),
                     const Icon(Icons.calendar_today_outlined, size: 16),
                   ],
                 ),
@@ -186,17 +205,20 @@ class ExpenseFormState extends State<ExpenseForm> {
                 onPressed: () {
                   setState(() {
                     saveData();
-                    _titleController.clear();
-                    _priceController.clear();
-                    _selectedCategory = 'Food';
-                    _selectedDate = DateTime.now();
+                    titleController.clear();
+                    priceController.clear();
+                    selectedCategory = 'Food';
+                    selectedDate = DateTime.now();
+                    if (widget.expense != null) Navigator.pop(context);
                   });
                   ();
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (_) => const Padding(
-                      padding: EdgeInsets.all(24),
-                      child: Text('Expense added!'),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: widget.expense != null
+                          ? Text("Expense updated successfully")
+                          : Text("Expense added successfully"),
+                      backgroundColor: AppColors.accent,
+                      duration: Duration(seconds: 2),
                     ),
                   );
                 },
@@ -241,19 +263,27 @@ class ExpenseFormState extends State<ExpenseForm> {
   );
 
   Future<void> saveData() async {
-    await HiveService.addExpense(
-      Expense(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: _titleController.text,
-        price: double.parse(_priceController.text),
-        category: _selectedCategory,
-        date: _selectedDate,
-      ),
-    );
+    final existing = widget.expense;
+    if (existing != null) {
+      await HiveService.addExpense(
+        Expense(
+          id: existing.id,
+          title: titleController.text,
+          price: double.parse(priceController.text),
+          category: selectedCategory,
+          date: selectedDate,
+        ),
+      );
+    } else {
+      await HiveService.addExpense(
+        Expense(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          title: titleController.text,
+          price: double.parse(priceController.text),
+          category: selectedCategory,
+          date: selectedDate,
+        ),
+      );
+    }
   }
 }
-  
-    // optional: clear fields after saving
-
-
-
