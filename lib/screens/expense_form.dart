@@ -205,7 +205,7 @@ class ExpenseFormState extends State<ExpenseForm> {
                 onPressed: () async {
                   await saveData();
                   if (!mounted) return;
-                  if (widget.expense != null) Navigator.pop(context);
+                  Navigator.pop(context);
                   setState(() {
                     titleController.clear();
                     priceController.clear();
